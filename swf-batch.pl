@@ -37,7 +37,7 @@ sub run_swfstrings($){
 	my $command;
 	#print "DEBUG:run_swfstrings($filename)";
 	$command ="swfstrings $filename > $filename.strings.txt";
-	print "Running:$command\n";
+	print "Running:".$command."\n";
 	`$command`;
 }
 
@@ -60,7 +60,7 @@ sub run_swfextract($){
 		# matching pattern: [-j]... or [-p]... at beginning of line
 		if ($line =~ m/^\s\[\-(j|p)\]/) {
 			# regex match variable $1
-			print "matched $1\n";
+			#print "matched $1\n";
 			# store in a scalar
 			$t = $1;
 			if (($t eq "j") and ($opt->jpeg)) {
@@ -73,7 +73,7 @@ sub run_swfextract($){
 				# jump to the next $line of @swfextract_output
 				next;
 			}
-			print $line;
+			#print $line;
 			# split line by spaces
 			my @tokens = split / /, $line;
 			my $i = 0;
@@ -84,9 +84,9 @@ sub run_swfextract($){
 			# remove commas and carriage returns from each token
 			foreach (@items) { chomp; s/,$//g; }
 			foreach (@items) { 
-				print "extracting $type ".$_." from".$filename."\n"; 
+				print "extracting $type ".$_." from ".$filename."\n"; 
 				my $command = "swfextract -$t $_ -o $filename.$_.$type $filename";
-				print "Running".$command."\n";
+				print "Running:".$command."\n";
 				`$command`;
 			}
 
@@ -98,7 +98,7 @@ sub walk_filelist(@) {
 	my @filelist = @_;
 	my @swfextract_output;
 	foreach my $file (@filelist){
-		print "\nFile:".$file."\n";
+		print "Processing File:".$file."\n";
 		run_swfstrings($file) if ($opt->strings);
 		@swfextract_output = run_swfextract($file) if ($opt->jpeg or $opt->png);
 		# check for jpeg if $opt->jpeg
@@ -113,11 +113,11 @@ sub walk_filelist(@) {
 my @swffiles = File::Find::Rule->file()->name( '*.swf' ) # extension .swf
 				->mindepth(1)->maxdepth(1) # at this depth
 				->in( '.' ); # current directory
-print "Number of SWF Files in Current Directory:".($#swffiles+1)."\n";
+print "SWF Files in Current Directory:".($#swffiles+1)."\n";
 if ($#swffiles+1 > 0) {
 	walk_filelist(@swffiles);
 } else {
-	print "no .swf files to process\n";
+	print "No .swf files to process\n";
 };
 ###############################################################################
 __END__
